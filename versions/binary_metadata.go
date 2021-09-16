@@ -1,16 +1,13 @@
 package versions
 
 import (
-	"cloud.google.com/go/storage"
-	"context"
 	"fmt"
-	"github.com/mollie/tf-provider-registry-api-generator/signing_key"
-	"google.golang.org/api/iterator"
 	"log"
 	"path"
 	"reflect"
 	"regexp"
-	"strings"
+
+	"github.com/mollie/tf-provider-registry-api-generator/signing_key"
 )
 
 type GpgSigningKey struct {
@@ -139,7 +136,7 @@ func (l BinaryMetaDataList) SetPGPSigningKey(signingKey signing_key.PGPSigningKe
 	}
 }
 
-func LoadFromBucket(bucket *storage.BucketHandle, prefix string) (filenames []string) {
+/*func LoadFromBucket(bucket *storage.BucketHandle, prefix string) (filenames []string) {
 
 	filenames = make([]string, 0)
 
@@ -162,4 +159,4 @@ func LoadFromBucket(bucket *storage.BucketHandle, prefix string) (filenames []st
 
 	}
 	return filenames
-}
+} */
