@@ -45,12 +45,10 @@ func assertDiscoveryDocument(bucket *storage.BucketHandle) {
 }
 
 func readJson(bucket *storage.BucketHandle, filename string, object interface{}) error {
-	r, err := bucket.Object(filename).NewReader(context.Background())
+
+	r, err := os.Open(filename) //bucket.Object(filename).NewReader(context.Background())
 	if err != nil {
-		if err.Error() == "storage: object doesn't exist" {
-			return nil
-		}
-		return fmt.Errorf("ERROR: failed to read file %s, %s", filename, err)
+		return nil
 	}
 	defer r.Close()
 	body, err := ioutil.ReadAll(r)
@@ -92,7 +90,7 @@ func writeJson(bucket *storage.BucketHandle, filename string, content interface{
 	w.ContentType = "application/json"
 	w.CacheControl = "no-cache, max-age=60"*/
 
-	filename = "/Users/ribeiro.santos/testes/" + filename
+	//filename = "/Users/ribeiro.santos/testes/" + filename
 
 	if _, err := os.Stat(filename); err != nil {
 		err = os.MkdirAll(filepath.Dir(filename), os.ModePerm)
