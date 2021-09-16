@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"path/filepath"
 	"reflect"
 	"regexp"
 	"strings"
@@ -87,19 +88,44 @@ func readShasums(bucket *storage.BucketHandle, filename string, shasums map[stri
 func writeJson(bucket *storage.BucketHandle, filename string, content interface{}) {
 	log.Printf("INFO: writing %s", filename)
 
-	w := bucket.Object(filename).NewWriter(context.Background())
+	/*w := bucket.Object(filename).NewWriter(context.Background())
 	w.ContentType = "application/json"
-	w.CacheControl = "no-cache, max-age=60"
+	w.CacheControl = "no-cache, max-age=60"*/
 
-	encoder := json.NewEncoder(w)
-	encoder.SetIndent("", "  ")
-	err := encoder.Encode(content)
+	filename = "/Users/ribeiro.santos/testes/" + filename
+
+	if _, err := os.Stat(filename); err != nil {
+		err = os.MkdirAll(filepath.Dir(filename), os.ModePerm)
+
+		if err != nil {
+			log.Fatalf("INFO: failed to create directory %s, %s", filename, err)
+		}
+	}
+
+	f, err := os.Create(filename)
+
+	if err != nil {
+		log.Fatalf("INFO: failed to write in disk %s, %s", filename, err)
+	}
+
+	bytes, err := json.Marshal(content)
+
+	if err != nil {
+		log.Fatalf("INFO: failed to marshall %s, %s", filename, err)
+	}
+
+	_, err = f.Write(bytes)
+
 	if err != nil {
 		log.Fatalf("INFO: failed to write %s, %s", filename, err)
 	}
-	if err = w.Close(); err != nil {
+
+	f.Sync()
+	f.Close()
+
+	/*if err = w.Close(); err != nil {
 		log.Fatalf("INFO: failed to close %s, %s", filename, err)
-	}
+	} */
 }
 
 func writeProviderVersions(bucket *storage.BucketHandle, directory string, newVersions *versions.ProviderVersions) {
